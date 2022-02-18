@@ -26,7 +26,7 @@ class LoginViewController: UIViewController {
                 if error != nil {
                     print(error!)
                 } else {
-                    strongSelf.performSegue(withIdentifier: Constants.loginSegue, sender: self)
+                    strongSelf.performSegue(withIdentifier: K.loginSegue, sender: self)
                 }
             }
         }

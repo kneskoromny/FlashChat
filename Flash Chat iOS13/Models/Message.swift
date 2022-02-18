@@ -8,6 +8,8 @@
 
 import Foundation
 
-struct Model {
+struct Message {
+    let sender: String
+    let body: String
     
 }
