@@ -345,7 +345,6 @@
                     </view>
                     <navigationItem key="navigationItem" id="Q5u-eL-Bgp">
                         <barButtonItem key="rightBarButtonItem" title="Log Out" id="k1f-CT-61y">
-                            <color key="tintColor" systemColor="systemBackgroundColor"/>
                             <connections>
                                 <action selector="logOutPressed:" destination="lwd-AH-u8E" id="oYF-To-0J8"/>
                             </connections>
@@ -368,6 +367,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="FBe-4o-QSO">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <navigationBarAppearance key="standardAppearance"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
