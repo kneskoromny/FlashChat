@@ -51,9 +51,11 @@ class ChatViewController: UIViewController {
                     print("Ошибка при сохранении данных в Firestore, \(e)")
                 } else {
                     print("Успешное сохранение данных")
+                    self.messageTextfield.text = ""
                 }
             }
         }
+        
     }
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
@@ -85,9 +87,12 @@ class ChatViewController: UIViewController {
                            let body = data[K.FStore.bodyField] as? String {
                             
                             let message = Message(sender: sender, body: body)
-                            self.messages.insert(message, at: 0)
+                            self.messages.append(message)
                             
                             self.tableView.reloadData()
+                            // scroll to last element
+                            let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
+                            self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
                         }
                     }
                 }
@@ -102,12 +107,26 @@ extension ChatViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = messages[indexPath.row]
+        
         let cell = tableView.dequeueReusableCell(
             withIdentifier: K.cellIdentifier, for: indexPath
         ) as! MessageCell
-        let message = messages[indexPath.row]
-        
         cell.label.text = message.body
+        
+        // проверяет кто отправитель сообщения и меняет UI
+        if message.sender == Auth.auth().currentUser?.email {
+            cell.leftIV.isHidden = true
+            cell.rightIV.isHidden = false
+            cell.messageBubble.backgroundColor = UIColor(named: K.BrandColors.lightPurple)
+            cell.label.textColor = UIColor(named: K.BrandColors.purple)
+        } else {
+            cell.leftIV.isHidden = false
+            cell.rightIV.isHidden = true
+            cell.messageBubble.backgroundColor = UIColor(named: K.BrandColors.purple)
+            cell.label.textColor = UIColor(named: K.BrandColors.lightPurple)
+        }
+        
         
         return cell
     }
