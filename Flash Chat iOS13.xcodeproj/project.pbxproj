@@ -20,6 +20,7 @@
 		2D30CA77D36804DBEAB33864 /* Pods_Flash_Chat_iOS13.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A590457CACDAA39CB092EE4C /* Pods_Flash_Chat_iOS13.framework */; };
 		F7C8741D27BE20810001143A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C8741C27BE20810001143A /* Model.swift */; };
 		F7C8742027BE648D0001143A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F7C8741F27BE648D0001143A /* GoogleService-Info.plist */; };
+		F7C8742227BF7C2D0001143A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C8742127BF7C2D0001143A /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		A590457CACDAA39CB092EE4C /* Pods_Flash_Chat_iOS13.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Flash_Chat_iOS13.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C8741C27BE20810001143A /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		F7C8741F27BE648D0001143A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F7C8742127BF7C2D0001143A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 				0B628181235DEE8400E35CAF /* LaunchScreen.storyboard */,
 				0B628184235DEE8400E35CAF /* Info.plist */,
 				F7C8741F27BE648D0001143A /* GoogleService-Info.plist */,
+				F7C8742127BF7C2D0001143A /* Constants.swift */,
 			);
 			path = "Flash Chat iOS13";
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				0B628191235DF01B00E35CAF /* ChatViewController.swift in Sources */,
 				0B62818D235DF00B00E35CAF /* RegisterViewController.swift in Sources */,
 				F7C8741D27BE20810001143A /* Model.swift in Sources */,
+				F7C8742227BF7C2D0001143A /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

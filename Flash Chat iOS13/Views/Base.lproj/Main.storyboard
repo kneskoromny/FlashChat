@@ -345,6 +345,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Q5u-eL-Bgp">
                         <barButtonItem key="rightBarButtonItem" title="Log Out" id="k1f-CT-61y">
+                            <color key="tintColor" systemColor="systemBackgroundColor"/>
                             <connections>
                                 <action selector="logOutPressed:" destination="lwd-AH-u8E" id="oYF-To-0J8"/>
                             </connections>
@@ -379,7 +380,9 @@
         </scene>
     </scenes>
     <designables>
-        <designable name="y7D-jv-BlJ"/>
+        <designable name="y7D-jv-BlJ">
+            <size key="intrinsicContentSize" width="278.5" height="54"/>
+        </designable>
     </designables>
     <inferredMetricsTieBreakers>
         <segue reference="aeg-Hf-68W"/>
