@@ -82,6 +82,7 @@
 		0B628175235DEE8100E35CAF /* Flash Chat iOS13 */ = {
 			isa = PBXGroup;
 			children = (
+				F7C8742127BF7C2D0001143A /* Constants.swift */,
 				0B628176235DEE8100E35CAF /* AppDelegate.swift */,
 				0B628178235DEE8100E35CAF /* SceneDelegate.swift */,
 				F7C8741E27BE20850001143A /* Models */,
@@ -91,7 +92,6 @@
 				0B628181235DEE8400E35CAF /* LaunchScreen.storyboard */,
 				0B628184235DEE8400E35CAF /* Info.plist */,
 				F7C8741F27BE648D0001143A /* GoogleService-Info.plist */,
-				F7C8742127BF7C2D0001143A /* Constants.swift */,
 			);
 			path = "Flash Chat iOS13";
 			sourceTree = "<group>";

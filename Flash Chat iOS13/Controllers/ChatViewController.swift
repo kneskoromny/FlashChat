@@ -16,11 +16,7 @@ class ChatViewController: UIViewController {
     
     let db = Firestore.firestore()
     
-    var messages: [Message] = [
-        Message(sender: "1@2.com", body: "Hey!"),
-        Message(sender: "a@b.com", body: "Hello!"),
-        Message(sender: "1@2.com", body: "What's up? Let's walk today evening?")
-    ]
+    var messages: [Message] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +30,9 @@ class ChatViewController: UIViewController {
         tableView.register(
             UINib(nibName: K.cellNibName, bundle: Bundle.main), forCellReuseIdentifier: K.cellIdentifier
         )
+        
+        loadMessages()
+        
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
@@ -44,7 +43,8 @@ class ChatViewController: UIViewController {
             db.collection(K.FStore.collectionName).addDocument(
                 data: [
                     K.FStore.senderField: messageSender,
-                    K.FStore.bodyField: messageBody
+                    K.FStore.bodyField: messageBody,
+                    K.FStore.dateField: Date().timeIntervalSince1970
                 ]
             ) { error in
                 if let e = error {
@@ -66,6 +66,33 @@ class ChatViewController: UIViewController {
             print("Error signing out: %@", signOutError)
         }
         
+    }
+    
+    func loadMessages() {
+        db.collection(K.FStore.collectionName)
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener { (querySnapshot, err) in
+                
+            if let err = err {
+                print("Ошибка при получении данных: \(err)")
+            } else {
+                self.messages = []
+                
+                if let snapshotDocuments = querySnapshot?.documents {
+                    for snapshotDocument in snapshotDocuments {
+                        let data = snapshotDocument.data()
+                        if let sender = data[K.FStore.senderField] as? String,
+                           let body = data[K.FStore.bodyField] as? String {
+                            
+                            let message = Message(sender: sender, body: body)
+                            self.messages.insert(message, at: 0)
+                            
+                            self.tableView.reloadData()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
