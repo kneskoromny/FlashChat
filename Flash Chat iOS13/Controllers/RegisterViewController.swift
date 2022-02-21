@@ -7,27 +7,30 @@
 //
 
 import UIKit
-import Firebase
 
 class RegisterViewController: UIViewController {
-
+    
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwordTextfield: UITextField!
     
+    private let viewModel = RegisterViewModel()
+    
+    // MARK: - UI Actions
     @IBAction func registerPressed(_ sender: UIButton) {
         
         if let email = emailTextfield.text,
            let password = passwordTextfield.text {
             
-            Auth.auth().createUser(
-                withEmail: email, password: password
-            ) { authResult, error in
+            viewModel.register(with: email, and: password) { result in
                 
-                if let e = error {
-                    print(e)
-                } else {
-                    // navigate to the ChatVC
+                switch result {
+                    
+                case .failure:
+                    // TODO: make alert
+                    print("Register error")
+                case .success:
                     self.performSegue(withIdentifier: K.registerSegue, sender: self)
+                    
                 }
             }
         }

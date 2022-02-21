@@ -26,4 +26,9 @@ struct K {
         static let bodyField = "body"
         static let dateField = "date"
     }
+    
+    enum Result {
+        case success
+        case failure
+    }
 }
