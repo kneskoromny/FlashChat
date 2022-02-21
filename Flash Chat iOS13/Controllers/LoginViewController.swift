@@ -7,30 +7,34 @@
 //
 
 import UIKit
-import Firebase
 
 class LoginViewController: UIViewController {
     
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwordTextfield: UITextField!
     
+    private let viewModel = LoginViewModel()
     
+    // MARK: - UI Actions
     @IBAction func loginPressed(_ sender: UIButton) {
         
         if let email = emailTextfield.text,
            let password = passwordTextfield.text {
             
-            Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
-                guard let strongSelf = self else { return }
+            viewModel.login(with: email, and: password) { [weak self] result in
                 
-                if error != nil {
-                    print(error!)
-                } else {
-                    strongSelf.performSegue(withIdentifier: K.loginSegue, sender: self)
+                switch result {
+                case .failure:
+                    // TODO: make alert
+                    print("Login error")
+                case .success:
+                    self?.performSegue(withIdentifier: K.loginSegue, sender: self)
                 }
             }
+            
         }
     }
     
 }
+
 

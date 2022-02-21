@@ -21,16 +21,14 @@ class RegisterViewController: UIViewController {
         if let email = emailTextfield.text,
            let password = passwordTextfield.text {
             
-            viewModel.register(with: email, and: password) { result in
+            viewModel.register(with: email, and: password) { [weak self] result in
                 
                 switch result {
-                    
                 case .failure:
                     // TODO: make alert
                     print("Register error")
                 case .success:
-                    self.performSegue(withIdentifier: K.registerSegue, sender: self)
-                    
+                    self?.performSegue(withIdentifier: K.registerSegue, sender: self)
                 }
             }
         }
