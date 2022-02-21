@@ -7,17 +7,15 @@
 //
 
 import UIKit
-import Firebase
 
 class ChatViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
     
-    var messages: [Message] = []
-    
     private let viewModel = ChatViewModel()
     
+    // MARK: - View life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,22 +25,38 @@ class ChatViewController: UIViewController {
         title = viewModel.title.value
         navigationItem.hidesBackButton = true
         
-        // для использования кастомной ячейки нужна регистрация
+        // custom cell register
         tableView.register(
             UINib(nibName: K.cellNibName, bundle: Bundle.main), forCellReuseIdentifier: K.cellIdentifier
         )
-        
-        loadMessages()
         
         // bind properties
         viewModel.message.bind { [weak self] message in
             self?.messageTextfield.text = message
         }
+        viewModel.messages.bind { [weak self] messages in
+            print(#function, "Current Thread: \(Thread.current)")
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+        // fetch data
+        viewModel.loadMessages { [weak self] result in
+            switch result {
+            case .failure:
+                print("Ошибка при получении данных")
+            case .success:
+                self?.tableView.reloadData()
+                self?.scrollToEnd()
+            }
+        }
     }
     
+    // MARK: - UI Actions
     @IBAction func sendPressed(_ sender: UIButton) {
+        
         if let messageBody = messageTextfield.text,
-           let messageSender = Auth.auth().currentUser?.email {
+           let messageSender = viewModel.userEmail {
             
             viewModel.send(
                 message: messageBody, sender: messageSender
@@ -70,52 +84,30 @@ class ChatViewController: UIViewController {
         }
     }
     
-    func loadMessages() {
-        viewModel.db.collection(K.FStore.collectionName)
-            .order(by: K.FStore.dateField)
-            .addSnapshotListener { (querySnapshot, err) in
-                
-            if let err = err {
-                print("Ошибка при получении данных: \(err)")
-            } else {
-                self.messages = []
-                
-                if let snapshotDocuments = querySnapshot?.documents {
-                    for snapshotDocument in snapshotDocuments {
-                        let data = snapshotDocument.data()
-                        if let sender = data[K.FStore.senderField] as? String,
-                           let body = data[K.FStore.bodyField] as? String {
-                            
-                            let message = Message(sender: sender, body: body)
-                            self.messages.append(message)
-                            
-                            self.tableView.reloadData()
-                            // scroll to last element
-                            let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
-                            self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-                        }
-                    }
-                }
-            }
-        }
+    // MARK: - Methods
+    private func scrollToEnd() {
+        let indexPath = IndexPath(
+            row: viewModel.messages.value.count - 1, section: 0
+        )
+        self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
 }
 
+// MARK: - Extensions
 extension ChatViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        messages.count
+        viewModel.messages.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = messages[indexPath.row]
+        let message = viewModel.messages.value[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(
             withIdentifier: K.cellIdentifier, for: indexPath
         ) as! MessageCell
         cell.label.text = message.body
         
-        // проверяет кто отправитель сообщения и меняет UI
-        if message.sender == Auth.auth().currentUser?.email {
+        if message.sender == viewModel.userEmail {
             cell.leftIV.isHidden = true
             cell.rightIV.isHidden = false
             cell.messageBubble.backgroundColor = UIColor(named: K.BrandColors.lightPurple)
@@ -126,8 +118,6 @@ extension ChatViewController: UITableViewDataSource {
             cell.messageBubble.backgroundColor = UIColor(named: K.BrandColors.purple)
             cell.label.textColor = UIColor(named: K.BrandColors.lightPurple)
         }
-        
-        
         return cell
     }
 }
