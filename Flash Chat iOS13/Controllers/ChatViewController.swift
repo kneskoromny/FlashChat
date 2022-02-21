@@ -14,16 +14,17 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
     
-    let db = Firestore.firestore()
-    
     var messages: [Message] = []
+    
+    private let viewModel = ChatViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.delegate = self
         tableView.dataSource = self
-        title = K.appName
+        
+        title = viewModel.title.value
         navigationItem.hidesBackButton = true
         
         // для использования кастомной ячейки нужна регистрация
@@ -33,45 +34,44 @@ class ChatViewController: UIViewController {
         
         loadMessages()
         
+        // bind properties
+        viewModel.message.bind { [weak self] message in
+            self?.messageTextfield.text = message
+        }
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
         if let messageBody = messageTextfield.text,
            let messageSender = Auth.auth().currentUser?.email {
             
-            // добавляем данные в firestore
-            db.collection(K.FStore.collectionName).addDocument(
-                data: [
-                    K.FStore.senderField: messageSender,
-                    K.FStore.bodyField: messageBody,
-                    K.FStore.dateField: Date().timeIntervalSince1970
-                ]
-            ) { error in
-                if let e = error {
-                    print("Ошибка при сохранении данных в Firestore, \(e)")
-                } else {
-                    print("Успешное сохранение данных")
-                    self.messageTextfield.text = ""
+            viewModel.send(
+                message: messageBody, sender: messageSender
+            ) { result in
+                
+                switch result {
+                case .success:
+                    print("Firebase saving success")
+                case .failure:
+                    // TODO: make alert
+                    print("Firebase saving error")
                 }
             }
         }
-        
     }
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
-        
-        do {
-            try Auth.auth().signOut()
-            
-            navigationController?.popToRootViewController(animated: true)
-        } catch let signOutError as NSError {
-            print("Error signing out: %@", signOutError)
+        viewModel.quit { [weak self] result in
+            switch result {
+            case .failure:
+                print("Signing out error")
+            case .success:
+                self?.navigationController?.popToRootViewController(animated: true)
+            }
         }
-        
     }
     
     func loadMessages() {
-        db.collection(K.FStore.collectionName)
+        viewModel.db.collection(K.FStore.collectionName)
             .order(by: K.FStore.dateField)
             .addSnapshotListener { (querySnapshot, err) in
                 
